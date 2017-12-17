@@ -71,7 +71,7 @@ class WordDataset:
         n_batches = len(arr)//words_per_batch
 
         arr = arr[:n_batches * words_per_batch]
-        arr = arr.reshape((n_seqs, -1))
+        arr = arr.reshape([n_seqs, -1])
 
         for n in range(0, arr.shape[1], n_steps):
             x = arr[:, n:n+n_steps]
