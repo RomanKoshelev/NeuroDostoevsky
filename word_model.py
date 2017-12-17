@@ -44,11 +44,12 @@ class WordRNN:
         return self._sess.run(self.initial_state, feed_dict={self.batch_size_pl: batch_size})
 
     
-    def build(self, num_units, num_layers, grad_clip):
+    def build(self, emb_size, num_units, num_layers, grad_clip):
         tf.reset_default_graph()
         self._graph = tf.Graph()
         self._scope  = "char_rnn"
         with self._graph.as_default(), tf.variable_scope(self._scope):
+            
             # placeholders
             self.inputs_pl     = tf.placeholder(tf.int32, [None, None], name='inputs')
             self.targets_pl    = tf.placeholder(tf.int32, [None, None], name='targets')
@@ -57,8 +58,11 @@ class WordRNN:
             self.keep_prob_pl  = tf.placeholder(tf.float32, name='keep_prob')
             self.lr_pl         = tf.placeholder(tf.float32, name='learning_rate')
 
+            # embedding
+            embedding_mtx      = tf.Variable(tf.random_normal(shape=[self.num_classes, emb_size], dtype=tf.float32))
+            embed              = tf.nn.embedding_lookup(embedding_mtx, self.inputs_pl)
+            
             # network
-            embed              = tf.one_hot(self.inputs_pl, self.num_classes)
             cell               = self._make_rnn_cell(num_units, num_layers, self.keep_prob_pl)
             initial_state      = cell.zero_state(self.batch_size_pl, tf.float32)
             outputs, state     = tf.nn.dynamic_rnn(cell, embed, self.seq_length_pl, initial_state, dtype=tf.float32)
@@ -82,7 +86,7 @@ class WordRNN:
         self._sess.run(self.init_op)
         
         
-    def train(self, dataset, seq_length, epochs, batch_size, keep_prob, learning_rate, log_every=10, mean_win=10):
+    def train(self, dataset, seq_length, epochs, batch_size, keep_prob, learning_rate, log_every=20, mean_win=30):
         try:
             for self.tr_epoch in range(self.tr_epoch, epochs):
                 state = self._get_initial_state(batch_size)
@@ -137,23 +141,26 @@ class WordRNN:
             p = np.squeeze(pred)
             p[np.argsort(p)[:-top_n]] = 0
             p = p / np.sum(p)
-            c = np.random.choice(vocab_size, 1, p=p)[0]
-            return c
+            t = np.random.choice(vocab_size, 1, p=p)[0]
+            return t
 
-        samples = [c for c in prime]
+        # todo: tokenize instead of splitting
+        prime   = prime.split(' ')
+        samples = [w for w in prime]
         state = self._get_initial_state(batch_size = 1)
 
-        for c in prime:
+        # todo: use <unk> token when encode
+        for w in prime: 
             x      = np.zeros([1, seq_len])
-            x[0,0] = dataset.vocab_to_int[c]
+            x[0,0] = dataset.word_to_token[w]
             preds, state = self.predict(x, state, seq_len)
-        c = pick_top_n(preds, self.num_classes, top_n)
-        samples.append(dataset.int_to_vocab[c])
+        t = pick_top_n(preds, self.num_classes, top_n)
+        samples.append(dataset.token_to_word[t])
 
         for i in range(n_samples):
-            x[0,0] = c
+            x[0,0] = t
             preds, state = self.predict(x, state, seq_len)
-            c = pick_top_n(preds, self.num_classes, top_n)
-            samples.append(dataset.int_to_vocab[c])
+            t = pick_top_n(preds, self.num_classes, top_n)
+            samples.append(dataset.token_to_word[t])
 
-        return ''.join(samples)
+        return ' '.join(samples)
