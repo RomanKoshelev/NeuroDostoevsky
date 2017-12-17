@@ -1,6 +1,6 @@
 import numpy as np
 
-class CharDataset:
+class WordDataset:
     def __init__(self):
         self.text    = None
         self.encoded = []
