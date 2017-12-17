@@ -84,7 +84,7 @@ class CharRNN:
         
     def train(self, dataset, seq_length, epochs, batch_size, keep_prob, learning_rate, log_every=10, mean_win=10):
         try:
-            for self.tr_epoch in range(epochs):
+            for self.tr_epoch in range(self.tr_epoch, epochs):
                 state = self._get_initial_state(batch_size)
 
                 for x, y in dataset.get_batches(batch_size, seq_length):
