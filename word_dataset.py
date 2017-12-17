@@ -12,7 +12,7 @@ class WordDataset:
         STOP_WORDS   = [u"[", u"]"]
         PUNCTS       = [u".", u",", u"?", u"!"]
         MIN_SENT_LEN = 2
-        MAX_SENT_LEN = 30
+        MAX_SENT_LEN = 50
         
         with open(path, 'r') as f:
             text=f.read()
