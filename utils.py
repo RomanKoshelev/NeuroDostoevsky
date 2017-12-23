@@ -11,3 +11,9 @@ def make_dir(path: str):
 def remove_dir(path: str):
     if os.path.exists(path):
         shutil.rmtree(path)
+
+def prepare_sample(s):
+    s = s.replace(' .', '.').replace(' ,', ',').replace(' !', '!').replace(' ?', '?').replace(' :', ':')
+    s = s.replace('— —', '—').replace(',,', ',').replace(',.', ',').replace('« ', '«').replace(' »', '»')
+    s = s.replace('—,', '—')
+    return s
