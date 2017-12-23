@@ -11,6 +11,7 @@ checkpoints/
 out/
 tboard/
 models/
+model/
 
 # Native build outputs
 *.slo

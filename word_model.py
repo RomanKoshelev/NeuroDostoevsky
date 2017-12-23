@@ -5,6 +5,7 @@ import tensorflow as tf
 import pickle
 from visualization import show_train_stats
 
+
 class WordRNN:
     def __init__(self, num_classes):
         self.num_classes = num_classes
