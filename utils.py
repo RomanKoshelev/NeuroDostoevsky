@@ -16,7 +16,7 @@ def remove_dir(path: str):
         shutil.rmtree(path)
 
         
-def prepare_sample(s):
+def prepare_char_sample(s):
     s = s.replace(' .', '.').replace(' ,', ',').replace(' !', '!').replace(' ?', '?').replace(' :', ':')
     s = s.replace('— —', '—').replace(',,', ',').replace(',.', ',').replace('« ', '«').replace(' »', '»')
     s = s.replace('—,', '—')
