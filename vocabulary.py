@@ -13,8 +13,7 @@ class Vocabulary:
         self._tokens_to_words = None
         self._words_to_tokens = None
     
-    @staticmethod
-    def _update(fdist, path):
+    def _update(self, fdist, path):
         with open(path, 'r') as f:
             text = f.read()
             text = text.replace('\xa0', ' ').replace('\ufeff','')
@@ -23,7 +22,7 @@ class Vocabulary:
         for sentence in nltk.tokenize.sent_tokenize(text):
             for word in nltk.tokenize.word_tokenize(sentence):
                 fdist[word]+=1
-        return fdist               
+        return fdist
 
     @property
     def size(self):
