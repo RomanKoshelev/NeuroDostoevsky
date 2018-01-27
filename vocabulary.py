@@ -2,6 +2,7 @@ import numpy as np
 import nltk
 from nltk import FreqDist
 import pickle
+from utils import make_dir
 
 UNK, UNK_CODE = '<UNK>', 0
 BOS, BOS_CODE = '<BOS>', 1
@@ -46,6 +47,7 @@ class Vocabulary:
 
         
     def save(self, path):
+        make_dir(path)
         pickle.dump([self._tokens_to_words, self._words_to_tokens], open(path, "wb"))
 
         

@@ -8,9 +8,11 @@ class TextDataset:
     def __init__(self):
         self._data       = None
         self._data_limit = None
+        self._path       = None
     
     def __str__(self):
-        return "%s:\n  shape: %s\n  data_limit: %s" % (self.__class__.__name__, self.shape, self._data_limit)
+        return "%s:\n  path: %s\n  shape: %s\n  data_limit: %s" % (
+            self.__class__.__name__, self._path, self.shape, self._data_limit)
     
     def _read_text(self, path, voc, min_len, max_len):
         with open(path, 'r') as f:
@@ -61,10 +63,11 @@ class TextDataset:
     def save(self, path):
         make_dir(path)
         pickle.dump([self._data], open(path, "wb"))
-
+        self._path = path 
 
     def restore(self, path):
         [self._data] = pickle.load(open(path, "rb"))
+        self._path = path 
 
     
     def set_data_limit(self, limit):

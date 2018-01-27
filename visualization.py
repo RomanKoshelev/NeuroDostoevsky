@@ -23,7 +23,36 @@ def show_train_stats(ep, tr_step, tr_losses, mean_win):
     tr, = plt.plot(tr_means, 'b', label="Train")
     plt.legend(handles=[tr])
     plt.grid(True)
+    plt.xlim(xmin=0)
    
+    # Show
+    clear_output(True)    
+    plt.show()
+
+    
+def show_train_stats_ex(ep, step, tr_losses, va_losses, mean_win=30, log_scale=False):
+    plt.figure(figsize=(16,12))
+    fontsize = 14
+
+    # Loss
+    plt.subplot(221)
+    tr_means = running_mean(tr_losses, mean_win)
+    va_means = running_mean(va_losses, mean_win)
+    tr_loss = tr_means[-1]
+    va_loss = va_means[-1]
+    plt.title("Epoch %.2f | Step %d | Valid %.2e | Train %.2e" % (ep, step, va_loss, tr_loss), fontsize=fontsize)
+    if not log_scale:
+        plt.plot(tr_losses, 'c')
+        va, = plt.plot(va_means, 'r', label="Valid")
+        tr, = plt.plot(tr_means, 'b', label="Train")
+        plt.legend(handles=[va, tr])
+    else:
+        plt.yscale("log")
+        tr, = plt.plot(tr_means, 'b', label="Train")
+        plt.legend(handles=[tr])
+    plt.grid(True)
+    plt.xlim(xmin=0)
+ 
     # Show
     clear_output(True)    
     plt.show()
