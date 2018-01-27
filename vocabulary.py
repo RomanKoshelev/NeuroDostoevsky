@@ -12,7 +12,10 @@ class Vocabulary:
     def __init__(self):
         self._tokens_to_words = None
         self._words_to_tokens = None
-    
+        
+    def __str__(self):
+        return "%s:\n  size: %d\n  _tokens_to_words: %s" % (self.__class__.__name__,self.size, self._tokens_to_words[:20])   
+
     def _update(self, fdist, path):
         with open(path, 'r') as f:
             text = f.read()

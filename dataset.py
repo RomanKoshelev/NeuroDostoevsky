@@ -9,20 +9,22 @@ class TextDataset:
         self._data       = None
         self._data_limit = None
     
-    @staticmethod
-    def _read_text(tokenized_text, path, voc, min_len, max_len):
-        
+    def __str__(self):
+        return "%s:\n  shape: %s\n  data_limit: %s" % (self.__class__.__name__, self.shape, self._data_limit)
+    
+    def _read_text(self, path, voc, min_len, max_len):
         with open(path, 'r') as f:
             text = f.read()
             text = text.replace('\xa0', ' ').replace('\ufeff','')
             text = text.lower()
-
+        tokenized_text = []
+        
         for sentence in nltk.tokenize.sent_tokenize(text):
             words = sent_to_words(sentence)
             if min_len <= len(words) <= max_len:
                 tokens = voc.to_tokens(words)
                 tokenized_text.append(tokens)
-    
+        return tokenized_text
 
     @property
     def shape(self):
@@ -35,14 +37,14 @@ class TextDataset:
         return self._data.shape[1]
     
     
-    def build(self, paths, vocab, min_len, max_len):
+    def build(self, paths, vocab, max_len, min_len=1):
         if type(paths) is str:
             paths = [paths]
         
         sentences = []
         
         for p in paths:
-            self._read_text(sentences, p, vocab, min_len, max_len)
+            sentences.extend(self._read_text(p, vocab, min_len, max_len))
 
         def to_data(sent):
             assert min_len <= len(sent) <= max_len
